@@ -51,6 +51,11 @@ dump:
     mkdir -p "{{DUMPS_DIR}}"
     docker compose exec -T postgres env PGPASSWORD="{{POSTGRES_PASSWORD}}" pg_dump -Fc --no-owner -U "{{POSTGRES_USER}}" "{{POSTGRES_DB}}" -v > "{{DUMPS_DIR}}/local-$(date +%Y-%m-%d-%H-%M)-dump.sql"
 
+# One-time project initialization step (after using the template)
+rename project_name="":
+    @if [ -z "{{project_name}}" ]; then echo "Usage: just rename <project_name>"; exit 1; fi
+    ./scripts/rename_project.sh {{project_name}}
+
 reinstall_db:
     ls {{DUMP_PATH}}
     docker compose down --volumes

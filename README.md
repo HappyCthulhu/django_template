@@ -2,6 +2,34 @@
 
 Personal template for quickly bootstrapping a **Django REST API** project: Postgres, JWT authentication, Swagger/OpenAPI, basic system checks, Docker environment, and a minimal set of dev commands.
 
+### Project initialization (after using the template)
+
+After creating a new repository from this template, rename the Django project package and internal imports:
+
+Run this **immediately after creating the repository from the template**:
+
+- **BEFORE installing dependencies**
+- **BEFORE running migrations**
+- **BEFORE starting Docker or `runserver`**
+
+```bash
+./scripts/rename_project.sh <project_name>
+```
+
+Important:
+
+- Run it **only once** (the script creates `.project_renamed` and refuses to run again).
+- It renames `server/` → `<project_name>/` and updates internal imports and `DJANGO_SETTINGS_MODULE`.
+- `<project_name>` must be a valid Python package name in **snake_case**:
+  - valid: `my_project`
+  - invalid: `my-project`, `MyProject`
+
+### Development setup
+
+- pre-commit is **optional**, but **strongly recommended**
+- Install pre-commit: `pip install pre-commit`
+- Install hooks: `pre-commit install` (hooks will run automatically on `git commit`)
+
 ### What it’s for
 
 - **Create a new backend project fast** without starting from a blank slate.
