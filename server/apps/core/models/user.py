@@ -8,6 +8,8 @@ from django.utils import timezone
 from server.apps.core.models.base import BaseModel
 
 
+from server.apps.core.history import track_history
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -40,6 +42,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
+@track_history
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = models.EmailField(unique=True, verbose_name="Email")
 

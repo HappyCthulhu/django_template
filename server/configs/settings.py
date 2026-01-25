@@ -20,15 +20,21 @@ LIBS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "rest_framework",
-    "corsheaders",
     "drf_spectacular",
+    "corsheaders",
+
+    "pghistory",
+    "pgtrigger",
+
+    "multiselectfield",
 ]
 
-_apps_subdir = "apps"
+_apps_subdir = "server.apps"
 
 PROJECT_APPS = [
-    "server.apps.core.apps.CoreConfig",
+    f"{_apps_subdir}.core.apps.CoreConfig",
 ]
 
 INSTALLED_APPS = LIBS + PROJECT_APPS
@@ -164,6 +170,10 @@ STATICFILES_DIRS = [BASE_DIR / "static"]  # здесь лежат исходни
 
 STATIC_ROOT = BASE_DIR / "www" / "public" / "static"  # здесь лежит финальная статика, которая будет доступна по url
 
+# Media files
+MEDIA_URL = "/media/"
+# В production media хранится в named Docker volume и монтируется в Django-контейнер как /app/media
+MEDIA_ROOT = Path("/app/media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
