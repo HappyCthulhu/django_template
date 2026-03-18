@@ -62,7 +62,6 @@ reinstall_db:
     docker compose up -d postgres
     sleep 2
     cat "{{DUMP_PATH}}" | docker compose exec -T postgres sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" pg_restore --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB" -1 --clean --if-exists --single-transaction'
-    PGPASSWORD={{POSTGRES_PASSWORD}} psql -U {{POSTGRES_USER}} -h {{DB_HOST}} -d {{POSTGRES_DB}} -c "update mailings_mailing set status = 'STOPPED'";
 
     {{BROWSER_PATH}} --new-window "http://127.0.0.1:8000/api/admin/"
     bash -c "python ./manage.py migrate"
