@@ -4,7 +4,7 @@ Personal template for quickly bootstrapping a **Django REST API** project: Postg
 
 ### Project initialization (after using the template)
 
-After creating a new repository from this template, rename the Django project package and internal imports:
+After creating a new repository from this template, rename the project-facing metadata and template placeholders:
 
 Run this **immediately after creating the repository from the template**:
 
@@ -19,7 +19,9 @@ Run this **immediately after creating the repository from the template**:
 Important:
 
 - Run it **only once** (the script creates `.project_renamed` and refuses to run again).
-- It renames `server/` → `<project_name>/` and updates internal imports and `DJANGO_SETTINGS_MODULE`.
+- It keeps `server/` as the Django package name to avoid breaking imports and historical migrations.
+- It updates project-facing names in files such as `pyproject.toml`, `README.md`, `.env.example`, `docker-compose.yml`, and `uv.lock` when present.
+- If `.env` or `.gitignore` do not exist yet, it creates them from `.env.example` and `.gitignore.example`.
 - `<project_name>` must be a valid Python package name in **snake_case**:
   - valid: `my_project`
   - invalid: `my-project`, `MyProject`

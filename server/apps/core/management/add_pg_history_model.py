@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 from django.apps import apps
 from django.core.management.base import BaseCommand
-from server.configs.settings import PROJECT_APPS
 
 from server.apps.core.checks import MODELS_WITHOUT_HISTORY
+from server.configs.settings import PROJECT_APPS
 
 if TYPE_CHECKING:
     from django.db.models import Model
