@@ -17,8 +17,8 @@ DUMP_PATH := env_var("DUMPS_DIR")/env_var("DUMP_NAME")
 BROWSER_PATH := env_var("BROWSER_PATH")
 
 run:
-   docker compose up -d postgres
-   ./manage.py runserver
+   docker compose up -d postgres redis
+   python manage.py runserver
 
 up *args:
    docker compose up {{args}}
@@ -33,19 +33,31 @@ rebuild:
    docker compose up --build
 
 makemigrations *args:
-   ./manage.py makemigrations {{args}}
+   python manage.py makemigrations {{args}}
     
 migrate *args:
-   ./manage.py migrate {{args}}
+   python manage.py migrate {{args}}
 
 makemigrations_and_migrate:
-   ./manage.py makemigrations && ./manage.py migrate 
+   python manage.py makemigrations && python manage.py migrate
 
 add_pg_history_model *args:
-   ./manage.py add_pg_history_model {{args}}
+   python manage.py add_pg_history_model {{args}}
+
+check:
+   python manage.py check
+
+createsuperuser:
+   python manage.py createsuperuser
+
+worker:
+   celery -A server.configs worker --loglevel=info
+
+docker-shell:
+   docker compose exec django bash
 
 repo:
-    repomix -i "**/migrations/**" -o back.txt && dragon -a -x "back.txt"
+    repomix -i "**/migrations/**" -i "**/stubs/**" -o back.txt && dragon -a -x "back.txt"
 
 dump:
     mkdir -p "{{DUMPS_DIR}}"
@@ -61,8 +73,12 @@ reinstall_db:
     docker compose down --volumes
     docker compose up -d postgres
     sleep 2
-    cat "{{DUMP_PATH}}" | docker compose exec -T postgres sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" pg_restore --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB" -1 --clean --if-exists --single-transaction'
 
-    {{BROWSER_PATH}} --new-window "http://127.0.0.1:8000/api/admin/"
+    cat "{{DUMP_PATH}}" | docker compose exec -T postgres sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" pg_restore --no-owner --no-privileges -U "$POSTGRES_USER" -d "$POSTGRES_DB" -1 --clean --if-exists --single-transaction'
+
+    ./manage.py migrate tgbot 0001 --fake
+
+    {{BROWSER_PATH}} --new-window "http://127.0.0.1:8000/admin/"
     bash -c "python ./manage.py migrate"
     docker compose up -d postgres
+
